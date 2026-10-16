@@ -1,0 +1,438 @@
+{
+  "datasets": [
+    {
+      "name": "a0980368",
+      "displayName": "price_vs_assumption",
+      "config": {
+        "version": "1.1",
+        "source": "wa_fiscal.gold.price_vs_assumption",
+        "dimensions": [
+          {
+            "name": "implied_revenue_impact_aud_m",
+            "expr": "source.implied_revenue_impact_aud_m",
+            "displayName": "Implied Revenue Impact Aud M"
+          },
+          {
+            "name": "aud_inr",
+            "expr": "source.aud_inr",
+            "displayName": "Aud Inr"
+          },
+          {
+            "expr": "source.* EXCEPT (implied_revenue_impact_aud_m, aud_inr)"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          },
+          {
+            "name": "implied_revenue_impact_aud",
+            "expr": "SUM(implied_revenue_impact_aud_m)*1000000",
+            "displayName": "Implied Revenue Impact Aud"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "a21419f3",
+      "displayName": "WA implied revenue",
+      "layout": [
+        {
+          "widget": {
+            "name": "8135104a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a0980368",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "sum(price_usd_per_tonne)",
+                      "expression": "SUM(`price_usd_per_tonne`)"
+                    },
+                    {
+                      "name": "sum(assumed_price_usd)",
+                      "expression": "SUM(`assumed_price_usd`)"
+                    },
+                    {
+                      "name": "sum(price_aud_per_tonne)",
+                      "expression": "SUM(`price_aud_per_tonne`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "lineShape": "linear"
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "sum(price_usd_per_tonne)",
+                      "displayName": "Price in USD per tonne"
+                    },
+                    {
+                      "fieldName": "sum(assumed_price_usd)",
+                      "displayName": "Assumed Price in USD per tonne"
+                    },
+                    {
+                      "fieldName": "sum(price_aud_per_tonne)",
+                      "displayName": "Price in AUD per Tonne"
+                    }
+                  ],
+                  "axis": {
+                    "title": "Price in USD"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "9e56907b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a0980368",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "sum(implied_revenue_impact_aud_m)",
+                      "expression": "SUM(`implied_revenue_impact_aud_m`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(implied_revenue_impact_aud_m)",
+                  "displayName": "Implied revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "variance-against-budget-assumption-am",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a0980368",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "measure(implied_revenue_impact_aud)",
+                      "expression": "MEASURE(`implied_revenue_impact_aud`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "frame_title_q_dashboards/01f1c876fb25184b8880585bf78be388/datasets/01f1c8775c4f142a903de59d0028811f",
+                "query": {
+                  "datasetName": "a0980368",
+                  "fields": [
+                    {
+                      "name": "ref2",
+                      "expression": "MAX(`month_start`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "<span style=\"text-align:center;display:block;\">{{ field:ref2 }} variance against budget assumption, A$m</span>",
+                  "fields": [
+                    {
+                      "queryName": "frame_title_q_dashboards/01f1c876fb25184b8880585bf78be388/datasets/01f1c8775c4f142a903de59d0028811f",
+                      "fieldName": "ref2"
+                    }
+                  ]
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(implied_revenue_impact_aud)",
+                  "format": {
+                    "type": "number-currency",
+                    "currencyCode": "USD",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 2
+                    },
+                    "significantFigures": {
+                      "type": "all"
+                    }
+                  }
+                },
+                "period": {
+                  "fieldName": "monthly(month_start)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "7c871377",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "a0980368",
+                  "fields": [
+                    {
+                      "name": "monthly(month_start)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start`)"
+                    },
+                    {
+                      "name": "sum(aud_usd)",
+                      "expression": "SUM(`aud_usd`)"
+                    },
+                    {
+                      "name": "sum(aud_inr)",
+                      "expression": "SUM(`aud_inr`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(aud_usd)",
+                        "displayName": "AUD to USD"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(aud_inr)",
+                        "displayName": "AUD TO INR"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 10,
+            "height": 4
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {
+        "light": "#ECE9E3",
+        "dark": "#111416"
+      },
+      "widgetBackgroundColor": {
+        "light": "#F7F7F3",
+        "dark": "#0D1013"
+      },
+      "widgetBorderColor": {
+        "light": "#DEE5EB",
+        "dark": "#282E34"
+      },
+      "fontColor": {
+        "light": "#543F10",
+        "dark": "#F1D8A2"
+      },
+      "selectionColor": {
+        "light": "#3A95B7",
+        "dark": "#64A5BC"
+      },
+      "visualizationColors": [
+        "#40777C",
+        "#D07D70",
+        "#93B2BD",
+        "#E0C085",
+        "#CADBD4",
+        "#EFE7DE",
+        "#4B2C17"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Montserrat",
+      "widgetPadding": 16,
+      "widgetMargin": 8,
+      "widgetCornerRadius": 16,
+      "widgetShadow": 0,
+      "continuousGradient": {
+        "lightMode": {
+          "fromCategoricalIndex": 0
+        },
+        "darkMode": {
+          "fromCategoricalIndex": 0
+        }
+      },
+      "fontSettings": {
+        "base": {
+          "fontFamily": "Montserrat",
+          "fontColor": {
+            "light": "#543F10",
+            "dark": "#F1D8A2"
+          },
+          "fontSize": 12,
+          "fontWeight": 400
+        },
+        "widgetTitle": {
+          "fontSize": 14,
+          "fontWeight": 500
+        },
+        "widgetDescription": {
+          "fontSize": 12,
+          "fontWeight": 400
+        },
+        "fieldTitle": {
+          "textCase": "TEXT_CASE_UPPERCASE",
+          "fontColor": {
+            "light": "#655228",
+            "dark": "#D9C292"
+          },
+          "fontSize": 11,
+          "fontWeight": 400
+        },
+        "fieldValue": {
+          "fontColor": {
+            "light": "#655228",
+            "dark": "#D9C292"
+          },
+          "fontSize": 11,
+          "fontWeight": 400
+        }
+      },
+      "gridLineColor": {
+        "light": "#CFD1CD",
+        "dark": "#36342C"
+      },
+      "axisLineColor": {
+        "light": "#BDB7AA",
+        "dark": "#4D483B"
+      }
+    },
+    "applyModeEnabled": false
+  }
+}
